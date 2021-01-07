@@ -12,11 +12,8 @@ if __name__ == '__main__':
 
     # 2021.01.07: 归一化与反归一化工作整合进BPmodel中
 
-    result_predict = numpy.zeros(len(test_cases), len(test_result[0]))
-
     # 根据训练的模型预测测试集的结果
-    for i in range(len(test_cases)):
-        result_predict[i][0] = nn.userPredict(test_cases[i])[0]
+    result_predict = nn.userPredict(test_cases)
 
     i = 0
     miss = 0

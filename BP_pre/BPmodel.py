@@ -1,5 +1,6 @@
 import math
 import random
+import numpy
 # 数据均值方差归一化模块
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
@@ -120,8 +121,11 @@ class BPNeuralNetwork:
     def userPredict(self, inputs):
         # 先对输入数据按照训练集规模归一化
         inputs = self.dataScaler.transform(inputs)
+        res = numpy.zeros((len(inputs), 1))
         # 获得归一化的预测结果
-        res = self.predict(inputs)
+        for i in range(len(inputs)):
+            res[i][0] = self.predict(inputs[i])[0]
+
         # 返回反归一化的结果
         res = self.resScaler.inverse_transform(res)
         return res
