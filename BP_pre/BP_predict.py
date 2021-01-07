@@ -10,20 +10,14 @@ if __name__ == '__main__':
 
     nn = joblib.load('./BPnn.pkl')
 
-    # 归一化器
-    m = MinMaxScaler()
+    # 2021.01.07: 归一化与反归一化工作整合进BPmodel中
 
-    # 利用m对data进行归一化，并储存data的归一化参数
-    test_result_m = m.fit_transform(test_result)
-    # 储存测试集的预测结果,该结果为归一化的结果
-    result_predict_m = numpy.zeros((len(test_result), len(test_result[0])))
+    result_predict = numpy.zeros(len(test_cases), len(test_result[0]))
 
     # 根据训练的模型预测测试集的结果
     for i in range(len(test_cases)):
-        result_predict_m[i][0] = nn.predict(test_cases[i])[0]
+        result_predict[i][0] = nn.userPredict(test_cases[i])[0]
 
-    # 对测试结果进行反归一化
-    result_predict = m.inverse_transform(result_predict_m)
     i = 0
     miss = 0
     for res in result_predict:

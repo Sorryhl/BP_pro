@@ -1,5 +1,8 @@
 import math
 import random
+# 数据均值方差归一化模块
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 
 class BPNeuralNetwork:
@@ -14,6 +17,8 @@ class BPNeuralNetwork:
         self.output_weights = []
         self.input_correction = []
         self.output_correction = []
+        self.dataScaler = StandardScaler()
+        self.resScaler = MinMaxScaler()
         random.seed(0)
 
     def setup(self, ni, nh, no):
@@ -63,25 +68,29 @@ class BPNeuralNetwork:
         output_deltas = [0.0] * self.output_n
         for o in range(self.output_n):
             error = label[o] - self.output_cells[o]
-            output_deltas[o] = self.sigmoid_derivative(self.output_cells[o]) * error
+            output_deltas[o] = self.sigmoid_derivative(
+                self.output_cells[o]) * error
         # get hidden layer error
         hidden_deltas = [0.0] * self.hidden_n
         for h in range(self.hidden_n):
             error = 0.0
             for o in range(self.output_n):
                 error += output_deltas[o] * self.output_weights[h][o]
-            hidden_deltas[h] = self.sigmoid_derivative(self.hidden_cells[h]) * error
+            hidden_deltas[h] = self.sigmoid_derivative(
+                self.hidden_cells[h]) * error
         # update output weights
         for h in range(self.hidden_n):
             for o in range(self.output_n):
                 change = output_deltas[o] * self.hidden_cells[h]
-                self.output_weights[h][o] += learn * change + correct * self.output_correction[h][o]
+                self.output_weights[h][o] += learn * change + \
+                    correct * self.output_correction[h][o]
                 self.output_correction[h][o] = change
         # update input weights
         for i in range(self.input_n):
             for h in range(self.hidden_n):
                 change = hidden_deltas[h] * self.input_cells[i]
-                self.input_weights[i][h] += learn * change + correct * self.input_correction[i][h]
+                self.input_weights[i][h] += learn * change + \
+                    correct * self.input_correction[i][h]
                 self.input_correction[i][h] = change
         # get global error
         error = 0.0
@@ -90,6 +99,9 @@ class BPNeuralNetwork:
         return error
 
     def train(self, cases, labels, limit=10000, learn=0.05, correct=0.1):
+        self.dataScaler.fit(cases)
+        self.resScaler.fit(labels)
+        cases, labels = self.transformData(cases, labels)
         for j in range(limit):
             error = 0.0
             for i in range(len(cases)):
@@ -100,6 +112,19 @@ class BPNeuralNetwork:
             # 训练时间过长，添加控制台消息显示训练过程
             if j % 10 == 0:
                 print(j, error)
+
+    # 输入数据归一化
+    def transformData(self, cases, results):
+        return self.dataScaler.transform(cases), self.resScaler.transform(results)
+
+    def userPredict(self, inputs):
+        # 先对输入数据按照训练集规模归一化
+        inputs = self.dataScaler.transform(inputs)
+        # 获得归一化的预测结果
+        res = self.predict(inputs)
+        # 返回反归一化的结果
+        res = self.resScaler.inverse_transform(res)
+        return res
 
     @staticmethod
     def rand(a, b):

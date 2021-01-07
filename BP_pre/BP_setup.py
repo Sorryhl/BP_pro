@@ -16,7 +16,7 @@ if __name__ == '__main__':
     # 利用m对data进行归一化，并储存data的归一化参数
     train_result_m = m.fit_transform(trainResults)
 
-    # 建立初始模型, 12个输入层，8个隐含层，1个输出层
+    # 建立初始模型, 13个输入层，8个隐含层，1个输出层
     nn.setup(len(trainCases[0]), 8, 1)
 
     # 参数依次为训练数据、训练期望结果、训练次数、学习率、正确率
