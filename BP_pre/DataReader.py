@@ -6,7 +6,7 @@ class DataReader:
 
     @staticmethod
     def read_traindata():
-        excel_path = "./hltraindata.xlsx"
+        excel_path = "./xzxtraindata.xlsx"
 
         tmp = DataReader.getfile(excel_path)
 
@@ -33,7 +33,7 @@ class DataReader:
 
     @staticmethod
     def read_testdata():
-        excel_path = "./hltestdata.xlsx"
+        excel_path = "./xzxtestdata.xlsx"
 
         tmp = DataReader.getfile(excel_path)
 
